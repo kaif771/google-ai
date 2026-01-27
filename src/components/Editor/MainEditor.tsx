@@ -6,6 +6,8 @@ import { EditorFooter } from './EditorFooter';
 import { FileExplorer } from './FileExplorer';
 import { CodeEditor } from './CodeEditor';
 import { AISidebar } from './AISidebar';
+import { AIChatbot } from './AIChatbot';
+import { PreviewPanel } from './PreviewPanel';
 import { CommandPalette } from './CommandPalette';
 import type { FileNode } from '../../types';
 
@@ -36,6 +38,12 @@ export const MainEditor: React.FC<MainEditorProps> = ({
         setCode,
         isCommandOpen,
         setIsCommandOpen,
+        isPreviewOpen,
+        setIsPreviewOpen,
+        isFileExplorerOpen,
+        setIsFileExplorerOpen,
+        isAISidebarOpen,
+        setIsAISidebarOpen,
         prompt,
         setPrompt
     } = useEditorState();
@@ -81,23 +89,47 @@ export const MainEditor: React.FC<MainEditorProps> = ({
 
     return (
         <div className="h-screen w-full flex flex-col bg-[#000000] text-slate-300 overflow-hidden font-sans">
-            <EditorHeader selectedProject={selectedProject} onBack={onBack} />
+            <EditorHeader
+                selectedProject={selectedProject}
+                onBack={onBack}
+                isFileExplorerOpen={isFileExplorerOpen}
+                onToggleFileExplorer={() => setIsFileExplorerOpen(!isFileExplorerOpen)}
+                isAISidebarOpen={isAISidebarOpen}
+                onToggleAISidebar={() => setIsAISidebarOpen(!isAISidebarOpen)}
+            />
 
             <main className="flex flex-1 overflow-hidden relative">
-                <FileExplorer
-                    activeFile={activeFile}
-                    fileTree={fileTree}
-                    onSelect={handleFileSelect}
-                    onCreateFile={handleCreateFile}
-                />
+                {isFileExplorerOpen && (
+                    <div className="absolute inset-y-0 left-0 z-40 lg:relative lg:inset-auto">
+                        <FileExplorer
+                            activeFile={activeFile}
+                            fileTree={fileTree}
+                            onSelect={handleFileSelect}
+                            onCreateFile={handleCreateFile}
+                        />
+                    </div>
+                )}
 
-                <CodeEditor
-                    activeFile={activeFile}
-                    code={code}
-                    setCode={setCode}
-                />
+                <div className="flex-1 flex flex-col min-w-0 relative">
+                    <CodeEditor
+                        activeFile={activeFile}
+                        code={code}
+                        setCode={setCode}
+                    />
+                    <AIChatbot />
 
-                <AISidebar />
+                    {isPreviewOpen && (
+                        <div className="absolute inset-0 z-50 bg-black">
+                            <PreviewPanel onClose={() => setIsPreviewOpen(false)} />
+                        </div>
+                    )}
+                </div>
+
+                {isAISidebarOpen && (
+                    <div className="absolute inset-y-0 right-0 z-40 lg:relative lg:inset-auto bg-[#0a0a0a] shadow-2xl lg:shadow-none">
+                        <AISidebar />
+                    </div>
+                )}
 
                 <CommandPalette
                     isOpen={isCommandOpen}
@@ -107,7 +139,10 @@ export const MainEditor: React.FC<MainEditorProps> = ({
                 />
             </main>
 
-            <EditorFooter />
+            <EditorFooter
+                isPreviewOpen={isPreviewOpen}
+                onTogglePreview={() => setIsPreviewOpen(!isPreviewOpen)}
+            />
         </div>
     );
 };

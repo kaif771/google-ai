@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Command, MessageSquareText } from 'lucide-react';
+import { MessageSquareText } from 'lucide-react';
 
 interface CommandPaletteProps {
     isOpen: boolean;
@@ -11,17 +11,6 @@ interface CommandPaletteProps {
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, setIsOpen, prompt, setPrompt }) => (
     <>
-        <button
-            onClick={() => setIsOpen(true)}
-            className="fixed bottom-10 right-[420px] z-40 group flex items-center gap-3 bg-white text-black p-4 rounded-2xl shadow-2xl hover:scale-105 transition-all active:scale-95"
-        >
-            <Sparkles className="text-black" size={20} />
-            <span className="text-xs font-bold pr-2">Ask Gemini</span>
-            <div className="hidden group-hover:flex items-center gap-1 bg-black/10 px-2 py-0.5 rounded text-[10px]">
-                <Command size={10} /> K
-            </div>
-        </button>
-
         <AnimatePresence>
             {isOpen && (
                 <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] bg-black/80 backdrop-blur-sm">

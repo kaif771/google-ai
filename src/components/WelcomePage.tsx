@@ -54,32 +54,19 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onProjectSelect }) => 
 
     return (
         <div className="h-screen w-full bg-[#000000] text-gray-400 flex flex-col overflow-hidden font-sans">
-            {/* Top Header */}
-            <header className="flex justify-between items-center px-6 py-4">
-                <div className="flex gap-4 text-[13px] font-medium text-white/50">
-                    {['File', 'Edit', 'Selection', 'View', 'Go', 'Run', 'Terminal', 'Help'].map((item) => (
-                        <span key={item} className="cursor-pointer hover:text-white transition-colors">
-                            {item}
-                        </span>
-                    ))}
-                </div>
-                <div className="flex gap-4">
-                    <div className="h-4 w-4 rounded-full border border-white/10" />
-                    <div className="h-4 w-4 rounded-full border border-white/10" />
-                    <div className="h-4 w-4 rounded-full border border-white/10" />
-                </div>
-            </header>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col items-center justify-center -mt-20">
+            <div className="flex-1 flex flex-col items-center justify-center mt-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col items-center mb-16"
+                    className="flex flex-col items-center mb-10 sm:mb-16 px-4"
                 >
-                    <div className="flex items-center gap-4 mb-3">
-                        <BrainCircuit size={48} className="text-white" />
-                        <h1 className="text-[32px] font-medium tracking-tight text-white uppercase font-sans">GEMINI ARCHITECT <span className="text-white/70">3.0</span></h1>
+                    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mb-3 text-center sm:text-left">
+                        <BrainCircuit size={48} className="text-white shrink-0" />
+                        <h1 className="text-[24px] sm:text-[32px] font-medium tracking-tight text-white uppercase font-sans">
+                            GEMINI ARCHITECT <span className="text-white/70">3.0</span>
+                        </h1>
                     </div>
                     <button className="text-[14px] text-white/40 hover:text-white transition-colors tracking-wide">
                         Sign in
@@ -87,11 +74,9 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onProjectSelect }) => 
                 </motion.div>
 
                 {/* Action Cards */}
-                <div className="flex gap-3 mb-20">
+                <div className="flex flex-col sm:flex-row gap-3 mb-10 sm:mb-20 px-6 w-full max-w-xl justify-center">
                     {[
-                        { icon: <FolderOpen size={22} />, label: 'Open project', onClick: handleOpenFolder },
-                        { icon: <Github size={22} />, label: 'Clone repo', onClick: () => { } },
-                        { icon: <Terminal size={22} />, label: 'Connect via SSH', onClick: () => { } }
+                        { icon: <FolderOpen size={22} />, label: 'Open project', onClick: handleOpenFolder }
                     ].map((action, i) => (
                         <motion.div
                             key={action.label}
@@ -99,9 +84,9 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onProjectSelect }) => 
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: i * 0.1 }}
                             onClick={action.onClick}
-                            className="w-[180px] h-[90px] bg-[#0a0a0a] hover:bg-[#111111] border border-white/5 rounded-xl flex flex-col items-start justify-center p-5 cursor-pointer transition-all group"
+                            className="w-full sm:w-[180px] h-auto min-h-[90px] bg-[#0a0a0a] hover:bg-[#111111] border border-white/5 rounded-xl flex items-start sm:flex-col items-center sm:items-start justify-center sm:justify-center p-5 cursor-pointer transition-all group gap-4 sm:gap-0"
                         >
-                            <div className="text-white/40 group-hover:text-white transition-colors mb-3">
+                            <div className="text-white/40 group-hover:text-white transition-colors sm:mb-3">
                                 {action.icon}
                             </div>
                             <span className="text-[14px] font-medium text-white/50 group-hover:text-white transition-colors">
@@ -128,11 +113,11 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onProjectSelect }) => 
                                 onClick={handleOpenFolder}
                                 className="flex items-center justify-between py-2 group hover:bg-white/5 px-4 rounded-lg cursor-pointer transition-colors"
                             >
-                                <div className="flex flex-col">
-                                    <span className="text-[15px] font-medium text-white/70 group-hover:text-white transition-colors">{project.name}</span>
-                                    <span className="text-[9px] text-white/20 font-bold uppercase tracking-widest mt-0.5">Click to reconnect folder</span>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="text-[14px] sm:text-[15px] font-medium text-white/70 group-hover:text-white transition-colors truncate">{project.name}</span>
+                                    <span className="text-[8px] sm:text-[9px] text-white/20 font-bold uppercase tracking-widest mt-0.5 truncate">Click to reconnect folder</span>
                                 </div>
-                                <span className="text-[11px] text-white/20 font-mono tracking-tight">{project.path}</span>
+                                <span className="text-[10px] sm:text-[11px] text-white/20 font-mono tracking-tight shrink-0">{project.path}</span>
                             </motion.div>
                         ))}
                         {recentProjects.length === 0 && (

@@ -5,6 +5,9 @@ export const useEditorState = () => {
     const [activeFileHandle, setActiveFileHandle] = useState<FileSystemFileHandle | null>(null);
     const [code, setCode] = useState("// Select a file to view code...");
     const [isCommandOpen, setIsCommandOpen] = useState(false);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const [isFileExplorerOpen, setIsFileExplorerOpen] = useState(true);
+    const [isAISidebarOpen, setIsAISidebarOpen] = useState(true);
     const [prompt, setPrompt] = useState("");
 
     const loadFile = useCallback(async (handle: FileSystemFileHandle) => {
@@ -33,6 +36,12 @@ export const useEditorState = () => {
         setCode,
         isCommandOpen,
         setIsCommandOpen,
+        isPreviewOpen,
+        setIsPreviewOpen,
+        isFileExplorerOpen,
+        setIsFileExplorerOpen,
+        isAISidebarOpen,
+        setIsAISidebarOpen,
         prompt,
         setPrompt
     };
