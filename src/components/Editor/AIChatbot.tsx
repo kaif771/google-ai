@@ -29,7 +29,7 @@ export const AIChatbot: React.FC = () => {
         }
     }, [messages, isOpen]);
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!input.trim()) return;
 
         const userMessage: Message = {
@@ -40,18 +40,40 @@ export const AIChatbot: React.FC = () => {
         };
 
         setMessages(prev => [...prev, userMessage]);
+        const currentInput = input; // Capture input before clearing
         setInput('');
 
-        // Mock AI Response
-        setTimeout(() => {
+        try {
+            // REAL API CALL: Update to your server's endpoint
+            const response = await fetch('http://localhost:8080/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: currentInput,
+                    // Send history formatted for Gemini
+                    history: messages.map(m => ({
+                        role: m.role === 'user' ? 'user' : 'model',
+                        parts: [{ text: m.content }]
+                    }))
+                }),
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const data = await response.json();
+
             const aiMessage: Message = {
-                id: (Date.now() + 1).toString(),
+                id: Date.now().toString(),
                 role: 'ai',
-                content: `I've analyzed your request about "${input}". I'm here to help you architect and implement that feature. What's the next step?`,
+                content: data.reply, // Assuming your server returns { "reply": "..." }
                 timestamp: new Date(),
             };
+
             setMessages(prev => [...prev, aiMessage]);
-        }, 1000);
+        } catch (error) {
+            console.error("Chat Error:", error);
+            // Optional: show error message in UI
+        }
     };
 
     if (!isOpen) {
