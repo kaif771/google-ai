@@ -27,7 +27,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 <BrainCircuit size={18} className="text-white" />
             </button>
             <div className="flex flex-col min-w-0">
-                <h1 className="text-[10px] sm:text-[11px] font-black tracking-[0.2em] sm:tracking-[0.3em] text-white leading-none uppercase truncate">
+                <h1 className="text-[10px] sm:text-[11px] font-black tracking-[0.2em] sm:tracking-[0.3em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500 leading-none uppercase truncate drop-shadow-[0_0_8px_rgba(34,211,238,0.3)]">
                     GEMINI ARCHITECT <span className="text-white/50 hidden xs:inline">3.0</span>
                 </h1>
                 <span className="text-[9px] text-white/20 font-bold uppercase tracking-widest mt-0.5 truncate max-w-[100px] sm:max-w-none">

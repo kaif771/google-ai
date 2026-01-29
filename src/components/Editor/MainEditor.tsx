@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useFileSystem } from '../../hooks/useFileSystem';
 import { useEditorState } from '../../hooks/useEditorState';
+import { useProjectContext } from '../../hooks/useProjectContext';
 import { EditorHeader } from './EditorHeader';
 import { EditorFooter } from './EditorFooter';
 import { FileExplorer } from './FileExplorer';
@@ -48,6 +49,16 @@ export const MainEditor: React.FC<MainEditorProps> = ({
         setPrompt
     } = useEditorState();
 
+    const { context, scanProject, isScanning } = useProjectContext(directoryHandle);
+    const [isThinking, setIsThinking] = useState(false);
+
+    // Scan project when directoryHandle is available
+    React.useEffect(() => {
+        if (directoryHandle) {
+            scanProject();
+        }
+    }, [directoryHandle, scanProject]);
+
     const handleSave = useCallback(async () => {
         if (activeFileHandle) {
             await saveFile(activeFileHandle, code);
@@ -87,6 +98,53 @@ export const MainEditor: React.FC<MainEditorProps> = ({
         }
     };
 
+    const handleArchitectRequest = async () => {
+        if (!prompt.trim()) return;
+        setIsThinking(true);
+        setIsCommandOpen(false); // Close palette to show progress
+
+        try {
+            // Ideally move this to a dedicated API service hook
+            const response = await fetch('http://localhost:8080/api/architect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prompt,
+                    projectContext: context
+                })
+            });
+
+            const data = await response.json();
+            // TODO: Display the plan/code in a meaningful way. 
+            // For now, we'll append it to a new file "ArchitectPlan.md" or show in Chat.
+
+            console.log("Architect Plan:", data);
+
+            // Create a plan file
+            const planFileName = `Architect_Plan_${Date.now()}.md`;
+            const planHandle = await createFile(planFileName);
+            if (planHandle) {
+                // Formatting the output
+                const content = `# Architect's Thought Process\n${data.thought}\n\n# Implementation Plan\n${data.plan}\n\n# Generated Code\n\`\`\`\n${data.code}\n\`\`\``;
+                // @ts-ignore - quick save
+                const writable = await planHandle.createWritable();
+                await writable.write(content);
+                await writable.close();
+
+                setActiveFile(planFileName);
+                setActiveFileHandle(planHandle);
+                setCode(content);
+            }
+
+        } catch (error) {
+            console.error("Architect failed:", error);
+            alert("Architect failed to reason. Check console.");
+        } finally {
+            setIsThinking(false);
+            setPrompt("");
+        }
+    };
+
     return (
         <div className="h-screen w-full flex flex-col bg-[#000000] text-slate-300 overflow-hidden font-sans">
             <EditorHeader
@@ -118,6 +176,14 @@ export const MainEditor: React.FC<MainEditorProps> = ({
                     />
                     <AIChatbot />
 
+                    {/* Loading Overlay */}
+                    {isThinking && (
+                        <div className="absolute inset-0 z-50 bg-black/80 flex items-center justify-center flex-col gap-4 backdrop-blur-sm">
+                            <div className="w-16 h-16 rounded-full border-4 border-cyan-500 border-t-transparent animate-spin" />
+                            <div className="text-cyan-400 font-mono animate-pulse">Gemini Architect is thinking...</div>
+                        </div>
+                    )}
+
                     {isPreviewOpen && (
                         <div className="absolute inset-0 z-50 bg-black">
                             <PreviewPanel onClose={() => setIsPreviewOpen(false)} />
@@ -136,6 +202,8 @@ export const MainEditor: React.FC<MainEditorProps> = ({
                     setIsOpen={setIsCommandOpen}
                     prompt={prompt}
                     setPrompt={setPrompt}
+                    onSubmit={handleArchitectRequest}
+                    isScanning={isScanning}
                 />
             </main>
 
@@ -145,4 +213,4 @@ export const MainEditor: React.FC<MainEditorProps> = ({
             />
         </div>
     );
-};
+};// Context hook usage will be added in MainEditor.tsx

@@ -9,7 +9,29 @@
   }
 }
 
-/* Custom Scrollbar for that Sleek Look */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #333; }
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-[0_0_15px_rgba(0, 0, 0, 0.2)];
+  }
+
+  .neon-text-blue {
+    @apply text-cyan-400 drop-shadow-[0_0_10px_rgba(34, 211, 238, 0.5)];
+  }
+
+  .neon-text-pink {
+    @apply text-pink-500 drop-shadow-[0_0_10px_rgba(236, 72, 153, 0.5)];
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #444;
+  }
+}
