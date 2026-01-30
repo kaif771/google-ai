@@ -25,7 +25,8 @@ export const useEditorState = () => {
         if (activeFileHandle) {
             loadFile(activeFileHandle);
         }
-    }, [activeFileHandle, loadFile]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeFileHandle]);
 
     return {
         activeFile,

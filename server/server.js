@@ -56,7 +56,8 @@ app.post('/api/architect', async (req, res) => {
                 "plan": "A step-by-step implementation plan.",
                 "code": "The actual code implementation (e.g., Express routes, Mongoose schemas)."
             }
-            Always return valid JSON. Do not wrap in markdown code blocks.`
+            Always return valid JSON. Do not wrap in markdown code blocks.`,
+            cachedContent: req.body.cacheName || undefined,
         });
 
         const result = await model.generateContent({
@@ -82,8 +83,11 @@ app.post('/api/architect', async (req, res) => {
 // 3. General Chat Endpoint (Multimodal)
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message, history, image } = req.body;
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-002" });
+        const { message, history, image, cacheName } = req.body;
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-pro-002",
+            cachedContent: cacheName || undefined
+        });
 
         const chat = model.startChat({
             history: history || []

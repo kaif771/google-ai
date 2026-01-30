@@ -49,7 +49,7 @@ export const MainEditor: React.FC<MainEditorProps> = ({
         setPrompt
     } = useEditorState();
 
-    const { context, scanProject, isScanning } = useProjectContext(directoryHandle);
+    const { context, scanProject, isScanning, cacheName } = useProjectContext(directoryHandle);
     const [isThinking, setIsThinking] = useState(false);
 
     // Scan project when directoryHandle is available
@@ -110,7 +110,8 @@ export const MainEditor: React.FC<MainEditorProps> = ({
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     prompt,
-                    projectContext: context
+                    projectContext: context,
+                    cacheName // Pass the cache name
                 })
             });
 
@@ -126,7 +127,7 @@ export const MainEditor: React.FC<MainEditorProps> = ({
             if (planHandle) {
                 // Formatting the output
                 const content = `# Architect's Thought Process\n${data.thought}\n\n# Implementation Plan\n${data.plan}\n\n# Generated Code\n\`\`\`\n${data.code}\n\`\`\``;
-                // @ts-ignore - quick save
+
                 const writable = await planHandle.createWritable();
                 await writable.write(content);
                 await writable.close();
@@ -174,7 +175,7 @@ export const MainEditor: React.FC<MainEditorProps> = ({
                         code={code}
                         setCode={setCode}
                     />
-                    <AIChatbot />
+                    <AIChatbot cacheName={cacheName} />
 
                     {/* Loading Overlay */}
                     {isThinking && (

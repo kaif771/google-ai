@@ -9,7 +9,11 @@ interface Message {
     timestamp: Date;
 }
 
-export const AIChatbot: React.FC = () => {
+interface AIChatbotProps {
+    cacheName: string | null;
+}
+
+export const AIChatbot: React.FC<AIChatbotProps> = ({ cacheName }) => {
     const [isOpen, setIsOpen] = useState(true);
     const [isExpanded, setIsExpanded] = useState(false);
     const [input, setInput] = useState('');
@@ -62,6 +66,15 @@ export const AIChatbot: React.FC = () => {
         setSelectedImage(null);
 
         try {
+            // Filter history: remove the first message if it's the welcome message (role 'ai')
+            // Gemini API requires history to start with 'user'
+            const historyToSend = messages
+                .filter((_, index) => index !== 0 || messages[0].role !== 'ai')
+                .map(m => ({
+                    role: m.role === 'user' ? 'user' : 'model',
+                    parts: [{ text: m.content }]
+                }));
+
             // REAL API CALL: Update to your server's endpoint
             const response = await fetch('http://localhost:8080/api/chat', {
                 method: 'POST',
@@ -69,11 +82,8 @@ export const AIChatbot: React.FC = () => {
                 body: JSON.stringify({
                     message: currentInput,
                     image: currentImage,
-                    // Send history formatted for Gemini
-                    history: messages.map(m => ({
-                        role: m.role === 'user' ? 'user' : 'model',
-                        parts: [{ text: m.content }]
-                    }))
+                    history: historyToSend,
+                    cacheName // Pass the cache name
                 }),
             });
 

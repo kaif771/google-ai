@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FolderOpen, Github, Terminal, BrainCircuit } from 'lucide-react';
+import { FolderOpen, BrainCircuit } from 'lucide-react';
 
 const STORAGE_KEY = 'gemini_architect_recent_projects';
 
@@ -38,10 +38,11 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onProjectSelect }) => 
 
     const handleOpenFolder = async () => {
         try {
-            // @ts-ignore
+
             if ('showDirectoryPicker' in window) {
-                // @ts-ignore
-                const directoryHandle = await window.showDirectoryPicker();
+
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const directoryHandle = await (window as any).showDirectoryPicker();
                 saveProject(directoryHandle.name);
                 onProjectSelect(directoryHandle.name, directoryHandle);
             } else {

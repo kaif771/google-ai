@@ -7,7 +7,7 @@ export const useFileSystem = (directoryHandle: FileSystemDirectoryHandle | null)
     const buildFileTree = useCallback(async (handle: FileSystemDirectoryHandle): Promise<FileNode[]> => {
         const nodes: FileNode[] = [];
         try {
-            // @ts-ignore
+            // @ts-expect-error - File System Access API types might be missing in some environments
             for await (const entry of handle.values()) {
                 if (entry.kind === 'file') {
                     nodes.push({ name: entry.name, kind: 'file', handle: entry });
@@ -66,7 +66,7 @@ export const useFileSystem = (directoryHandle: FileSystemDirectoryHandle | null)
 
     const saveFile = async (handle: FileSystemFileHandle, content: string) => {
         try {
-            // @ts-ignore
+
             const writable = await handle.createWritable();
             await writable.write(content);
             await writable.close();
